@@ -81,6 +81,8 @@ public class CompileCommandsJson : Logger
             string argsString = taskArgs.CommandLine.Substring(clExeIndex + clExe.Length).TrimStart();
             string[] cmdArgs = CommandLineToArgs(argsString);
 
+            string argsLibs = "";
+
             // Options that consume the following argument.
             string[] optionsWithParam = {
                 "D", "I", "F", "U", "FI", "FU", 
@@ -95,6 +97,9 @@ public class CompileCommandsJson : Logger
             {
                 bool isOption = cmdArgs[i].StartsWith("/") || cmdArgs[i].StartsWith("-");
                 string option = isOption ? cmdArgs[i].Substring(1) : "";
+
+                if (cmdArgs[i].StartsWith("/I"))
+                    argsLibs += cmdArgs[i] + ' ';
 
                 if (isOption && Array.Exists(optionsWithParam, e => e == option))
                 {
@@ -156,7 +161,8 @@ public class CompileCommandsJson : Logger
             }
 
             // simplify the compile command to avoid .. etc.
-            string compileCommand = '"' + Path.GetFullPath(compilerPath) + "\" " + argsString;
+            string compileCommand = '"' + Path.GetFullPath(compilerPath) + "\" " + argsLibs;
+            //string compileCommand = '"' + Path.GetFullPath(compilerPath) + "\" " + argsString;
             string dirname = Path.GetDirectoryName(taskArgs.ProjectFile);
 
             // For each source file, emit a JSON entry
@@ -178,7 +184,7 @@ public class CompileCommandsJson : Logger
                     HttpUtility.JavaScriptStringEncode(dirname)));
                 streamWriter.WriteLine(String.Format(
                     " \"command\": \"{0}\",",
-                    HttpUtility.JavaScriptStringEncode(compileCommand)));
+                    HttpUtility.JavaScriptStringEncode(compileCommand + filename)));
                 streamWriter.Write(String.Format(
                     " \"file\": \"{0}\"}}",
                     HttpUtility.JavaScriptStringEncode(filename)));
