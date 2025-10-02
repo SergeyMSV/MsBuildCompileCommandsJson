@@ -161,7 +161,7 @@ public class CompileCommandsJson : Logger
             }
 
             // simplify the compile command to avoid .. etc.
-            string compileCommand = '"' + Path.GetFullPath(compilerPath) + "\"  -w /std:c++latest " + argsLibs;
+            string compileCommand = '"' + Path.GetFullPath(compilerPath) + "\"  -w /std:c++latest /I..\\Libs_Other " + argsLibs;
             //string compileCommand = '"' + Path.GetFullPath(compilerPath) + "\" " + argsString;
             string dirname = Path.GetDirectoryName(taskArgs.ProjectFile);
 
